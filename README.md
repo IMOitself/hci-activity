@@ -1,4 +1,4 @@
-# hci-activity
+# hci-activity [[ view site ]](https://htmlpreview.github.io/?https://github.com/IMOitself/hci-activity/blob/master/basta.html)
 
 ## Overview
 The goal of this lab is to move away from "binary" design—where actions are instant and permanent—toward Forgiving Design. You will apply Human-Computer Interaction (HCI) theories to create a system that assumes the user is human and will eventually make a mistake.
