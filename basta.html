@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unova Network</title>
+    <!-- Meta tags to help with some previewers -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UnovaBook - Trainer Network</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
     
@@ -14,9 +16,11 @@
                     colors: {
                         unova: {
                             blue: '#0099e6',   /* POKEMON INFO Header Blue */
+                            darkblue: '#007bb5', /* Darker blue for nav active states */
+                            bg: '#e9ebee',     /* Facebook classic background gray */
                             dark: '#1a1c23',   /* Battle Screen Dark BG */
-                            panel: '#ffffff',  /* Stat Panel White */
-                            gray: '#e0e0e0',   /* Stat Panel Left Column */
+                            panel: '#ffffff',  /* Card White */
+                            gray: '#d3d6db',   /* Facebook border gray */
                             red: '#e60012',    /* FIGHT / RUN Red */
                             green: '#00b33c',  /* POKEMON Green */
                             yellow: '#ffcc00', /* BAG Yellow */
@@ -33,176 +37,281 @@
     
     <style>
         body {
-            background-color: #111;
-            /* Replicating the dark grid from the battle/status screens */
+            background-color: #e9ebee; /* Classic FB gray */
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-            background-size: 16px 16px;
-            background-attachment: fixed;
+                linear-gradient(rgba(0, 153, 230, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 153, 230, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow-y: scroll;
         }
 
-        /* --- Custom Unova UI Elements based on References --- */
-
-        .unova-container {
-            border: 4px solid #000;
-            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+        /* --- Unova Themed Components --- */
+        .unova-card {
+            background-color: #ffffff;
+            border: 3px solid #000;
+            border-radius: 8px;
+            box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1rem;
         }
 
-        /* The Battle Screen Button Style (Image 2) */
+        /* The Battle Screen Button Style */
         .battle-btn {
-            background-color: #2a2a2a;
             color: #ffffff;
             font-family: 'DotGothic16', sans-serif;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
-            text-shadow: 2px 2px 0px #000;
-            border: 3px solid #000;
+            text-shadow: 1px 1px 0px #000;
+            border: 2px solid #000;
             position: relative;
             cursor: pointer;
             transition: transform 0.1s;
-            /* The iconic colored inner border */
-            box-shadow: inset 0 0 0 3px var(--btn-color);
-            border-radius: 4px; /* Slight rounding for the tech aesthetic */
+            box-shadow: inset 0 0 0 2px var(--btn-color);
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.25rem;
+            padding: 4px 12px;
         }
 
         .battle-btn:active {
             transform: translateY(2px);
         }
 
-        /* Specific Button Colors based on the bottom screen */
-        .btn-fight  { --btn-color: #e60012; } /* Red */
-        .btn-bag    { --btn-color: #ffcc00; } /* Yellow */
-        .btn-poke   { --btn-color: #00b33c; } /* Green */
-        .btn-run    { --btn-color: #00aae6; } /* Blue */
+        /* Button Colors */
+        .btn-fight  { --btn-color: #e60012; } /* Red (Delete) */
+        .btn-bag    { --btn-color: #ffcc00; } /* Yellow (Edit) */
+        .btn-poke   { --btn-color: #00b33c; } /* Green (Post/Save) */
+        .btn-run    { --btn-color: #00aae6; } /* Blue (Like) */
+        .btn-gray   { --btn-color: #888888; } /* Gray (Neutral) */
 
-        /* The Info Top Bar (Image 1) */
-        .info-header {
+        /* Top Navigation */
+        .fb-navbar {
             background-color: #0099e6;
-            border-bottom: 4px solid #000;
-            color: #000;
-            text-shadow: 1px 1px 0px rgba(255,255,255,0.3);
-            font-weight: bold;
-            letter-spacing: 1px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 16px;
-            position: relative;
-        }
-        
-        /* The angled << STATUS >> box from Image 1 */
-        .status-badge {
-            background: #e0e0e0;
-            color: #000;
-            text-shadow: none;
-            padding: 2px 12px;
-            border: 2px solid #000;
-            font-size: 0.9rem;
-            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%);
-            margin-right: -10px;
+            border-bottom: 3px solid #000;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* Stat Panel specific styles (Image 1) */
-        .stat-row {
-            border-bottom: 2px solid #ccc;
+        .search-bar {
+            background-color: #fff;
+            border: 2px solid #000;
+            color: #000;
+            border-radius: 16px;
+            padding: 2px 12px;
+            outline: none;
+            font-family: 'DotGothic16', sans-serif;
         }
-        .stat-row:last-child {
-            border-bottom: none;
-        }
-        
-        .stat-label-col {
-            background-color: #f0f0f0;
-            border-right: 4px solid #000;
-            position: relative;
-        }
-        
-        /* The little dot bullet points from Image 1 */
-        .stat-bullet::before {
-            content: '•';
-            color: #666;
-            margin-right: 8px;
-            font-weight: bold;
+        .search-bar:focus {
+            box-shadow: inset 0 0 0 2px #ffcc00;
         }
 
         /* Textarea mimicking the battle dialogue box */
         .dialogue-box {
             background-color: #1a1c23;
-            border: 4px solid #000;
+            border: 3px solid #000;
             color: #fff;
             box-shadow: inset 0 0 0 2px #fff;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 10px;
+            border-radius: 6px;
             width: 100%;
             resize: vertical;
         }
         .dialogue-box:focus {
             outline: none;
-            box-shadow: inset 0 0 0 2px #ffcc00; /* Yellow focus */
+            box-shadow: inset 0 0 0 2px #00b33c; /* Green focus */
         }
 
-        /* Pixel rendering for avatars */
         .pixel-art {
             image-rendering: pixelated;
         }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e9ebee; }
+        ::-webkit-scrollbar-thumb { background: #0099e6; border-radius: 4px; border: 1px solid #000; }
+        ::-webkit-scrollbar-thumb:hover { background: #007bb5; }
+
+        /* Left Sidebar Nav Links */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: #d3d6db;
+            border-color: #000;
+        }
     </style>
 </head>
-<body class="font-pixel text-black min-h-screen pb-12">
+<body class="font-pixel text-black min-h-screen">
 
-    <!-- Global Header (Mimicking "POKÉMON INFO" bar) -->
-    <header class="info-header sticky top-0 z-50 shadow-lg">
-        <h1 class="text-xl md:text-2xl uppercase tracking-widest">TRAINER NETWORK</h1>
-        <div class="status-badge"><< ONLINE >></div>
-    </header>
-
-    <main class="max-w-3xl mx-auto px-4 mt-8">
-        
-        <!-- Create Post Area (Dialogue Box Style) -->
-        <div class="mb-10">
-            <h2 class="text-white text-xl mb-2 drop-shadow-md">What will you do?</h2>
-            <div class="relative">
-                <textarea id="newPostInput" class="dialogue-box min-h-[100px] text-lg" placeholder="Broadcast a message to the region..."></textarea>
-                <div class="absolute bottom-[-16px] right-2 flex gap-3">
-                    <button onclick="createPost()" class="battle-btn btn-poke px-6 py-2 shadow-lg">
-                        BROADCAST!
-                    </button>
-                </div>
+    <!-- Top Navigation Bar (Facebook Style) -->
+    <nav class="fb-navbar h-14 flex items-center px-4 justify-between">
+        <div class="flex items-center gap-4 w-1/3">
+            <!-- Logo -->
+            <div class="bg-white text-unova-blue font-bold px-2 py-1 rounded border-2 border-black text-xl tracking-wider shadow-[2px_2px_0_#000] cursor-pointer">
+                UnovaBook
+            </div>
+            <!-- Search -->
+            <div class="hidden md:block relative w-64">
+                <input type="text" class="search-bar w-full" placeholder="Search for Trainers...">
+                <span class="absolute right-3 top-1 text-gray-500">🔍</span>
             </div>
         </div>
 
-        <!-- Feed Container -->
-        <div id="feed" class="flex flex-col gap-8 mt-12">
-            <!-- Posts injected via JS -->
+        <!-- Center Icons (Notifications, Messages, etc) -->
+        <div class="hidden sm:flex justify-center gap-6 w-1/3">
+            <div class="cursor-pointer hover:bg-unova-darkblue p-2 rounded-lg border-b-4 border-white">🏠 Feed</div>
+            <div class="cursor-pointer hover:bg-unova-darkblue p-2 rounded-lg">📺 Vs. Recorder</div>
+            <div class="cursor-pointer hover:bg-unova-darkblue p-2 rounded-lg">🛒 Mall 9</div>
         </div>
 
-    </main>
+        <!-- Right Profile/Actions -->
+        <div class="flex justify-end items-center gap-3 w-1/3">
+            <div class="bg-unova-darkblue p-2 rounded-full border-2 border-black cursor-pointer hover:bg-blue-800">
+                🔔
+            </div>
+            <div class="flex items-center gap-2 cursor-pointer hover:bg-unova-darkblue p-1 pr-3 rounded-full border-2 border-transparent hover:border-black transition-all">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/498.gif" alt="Profile" class="h-8 w-8 pixel-art bg-white border border-black rounded-full object-contain p-1">
+                <span class="font-bold hidden lg:block text-shadow-sm">Player</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main 3-Column Layout -->
+    <div class="max-w-7xl mx-auto flex justify-center pt-6 px-4 gap-6">
+        
+        <!-- Left Sidebar (Navigation) -->
+        <aside class="hidden xl:block w-1/4 max-w-[280px] sticky top-20 h-max">
+            <div class="nav-link font-bold text-lg mb-2">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/498.gif" class="w-8 h-8 pixel-art bg-white border border-black rounded-full object-contain p-1">
+                Player One
+            </div>
+            <div class="nav-link">
+                <span class="text-xl">🤝</span> Pal Pad (Friends)
+            </div>
+            <div class="nav-link">
+                <span class="text-xl">🌐</span> Entralink (Groups)
+            </div>
+            <div class="nav-link">
+                <span class="text-xl">🎒</span> Item PC (Saved)
+            </div>
+            <div class="nav-link">
+                <span class="text-xl">📅</span> Events
+            </div>
+            <hr class="border-gray-400 border-2 my-2">
+            <div class="text-gray-500 font-bold mb-2 mt-2 px-2">Your Shortcuts</div>
+            <div class="nav-link">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" class="w-6 h-6 pixel-art"> Castelia City Gym
+            </div>
+            <div class="nav-link">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/potion.png" class="w-6 h-6 pixel-art"> Item Trading Hub
+            </div>
+        </aside>
+
+        <!-- Center Column (Feed) -->
+        <main class="w-full max-w-[600px] flex-shrink-0 mb-20">
+            
+            <!-- Create Post Component -->
+            <div class="unova-card p-4">
+                <div class="flex gap-3 mb-3">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/498.gif" class="w-10 h-10 pixel-art bg-gray-100 border-2 border-black rounded-full object-contain p-1 flex-shrink-0">
+                    <textarea id="newPostInput" class="dialogue-box h-12 hover:bg-[#252833] transition-colors" placeholder="What's on your mind, Trainer?"></textarea>
+                </div>
+                <hr class="border-gray-300 border mb-3">
+                <div class="flex justify-between items-center">
+                    <div class="flex gap-2">
+                        <button class="battle-btn btn-gray bg-white text-black shadow-none border-gray-300 hover:bg-gray-100"><span class="text-red-500">📷</span> Photo</button>
+                        <button class="battle-btn btn-gray bg-white text-black shadow-none border-gray-300 hover:bg-gray-100 hidden sm:flex"><span class="text-yellow-500">📍</span> Location</button>
+                    </div>
+                    <button onclick="createPost()" class="battle-btn btn-poke px-6 font-bold shadow-[2px_2px_0_#000]">
+                        POST
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feed Container -->
+            <div id="feed" class="flex flex-col gap-4">
+                <!-- Posts injected via JS -->
+            </div>
+
+        </main>
+
+        <!-- Right Sidebar (Contacts) -->
+        <aside class="hidden lg:block w-1/4 max-w-[280px] sticky top-20 h-max">
+            <div class="text-gray-500 font-bold mb-3 flex justify-between items-center">
+                <span>Active Trainers</span>
+                <span>🔍</span>
+            </div>
+            
+            <!-- Contact Items -->
+            <div class="flex items-center gap-3 p-2 hover:bg-gray-200 rounded cursor-pointer border-2 border-transparent hover:border-black">
+                <div class="relative">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/501.gif" class="w-8 h-8 pixel-art bg-white border border-black rounded-full object-contain p-1">
+                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                </div>
+                <span class="font-bold">Hilbert</span>
+            </div>
+            
+            <div class="flex items-center gap-3 p-2 hover:bg-gray-200 rounded cursor-pointer border-2 border-transparent hover:border-black">
+                <div class="relative">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/495.gif" class="w-8 h-8 pixel-art bg-white border border-black rounded-full object-contain p-1">
+                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                </div>
+                <span class="font-bold">Cheren</span>
+            </div>
+
+            <div class="flex items-center gap-3 p-2 hover:bg-gray-200 rounded cursor-pointer border-2 border-transparent hover:border-black">
+                <div class="relative">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/517.gif" class="w-8 h-8 pixel-art bg-white border border-black rounded-full object-contain p-1">
+                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                </div>
+                <span class="font-bold">Bianca</span>
+            </div>
+
+            <div class="flex items-center gap-3 p-2 hover:bg-gray-200 rounded cursor-pointer border-2 border-transparent hover:border-black opacity-50">
+                <div class="relative">
+                    <div class="w-8 h-8 bg-black border border-black rounded-full flex items-center justify-center text-white text-xs">N</div>
+                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 border-2 border-white rounded-full"></div>
+                </div>
+                <span class="font-bold">N</span>
+            </div>
+        </aside>
+
+    </div>
 
     <script>
-        // Initial Data
+        // Initial Mock Data
         let posts = [
             {
                 id: 1,
                 author: "Hilbert",
-                dexNo: "001",
-                type: "HERO",
                 avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/501.gif", // Oshawott
-                content: "Training on Route 1. The wild Patrat are relentless today, but Oshawott is holding up perfectly. Time to heal up at the Accumula Town Center!",
-                timestamp: "Lv. 14",
-                isEditing: false
+                content: "Just arrived in Castelia City! The buildings are huge. Oshawott is terrified of the crowds, but we're heading to get a Casteliacone!",
+                timestamp: "2 hrs ago",
+                likes: 14,
+                comments: 3,
+                isEditing: false,
+                isLiked: false
             },
             {
                 id: 2,
                 author: "Cheren",
-                dexNo: "002",
-                type: "RIVAL",
                 avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/495.gif", // Snivy
-                content: "A Pokémon battle isn't just about throwing out moves blindly. You need to calculate type advantages and anticipate your opponent's strategy.",
-                timestamp: "Lv. 16",
-                isEditing: false
+                content: "A Pokémon battle isn't just about throwing out moves blindly. You need to calculate type advantages and anticipate your opponent's strategy. I won't lose to the Gym Leader today.",
+                timestamp: "5 hrs ago",
+                likes: 8,
+                comments: 12,
+                isEditing: false,
+                isLiked: false
             }
         ];
 
@@ -216,83 +325,73 @@
 
             posts.forEach(post => {
                 const postEl = document.createElement('div');
-                postEl.className = 'unova-container bg-white flex flex-col relative';
+                postEl.className = 'unova-card flex flex-col';
                 
                 if (post.isEditing) {
                     // --- EDIT MODE UI ---
                     postEl.innerHTML = `
-                        <!-- Header -->
-                        <div class="bg-black text-white px-3 py-1 flex justify-between border-b-4 border-black text-lg">
-                            <span>EDITING TRANSMISSION</span>
+                        <div class="p-3 bg-gray-100 border-b-2 border-black flex items-center gap-2 font-bold">
+                            <span>✏️ Editing Post</span>
                         </div>
-                        <!-- Edit Body -->
-                        <div class="p-4 bg-[#2a2a2a]">
-                            <textarea id="edit-input-${post.id}" class="dialogue-box min-h-[120px] text-lg">${post.content}</textarea>
+                        <div class="p-4 bg-white">
+                            <textarea id="edit-input-${post.id}" class="dialogue-box min-h-[100px] text-lg">${post.content}</textarea>
                         </div>
-                        <!-- Bottom Action Bar -->
-                        <div class="bg-unova-dark border-t-4 border-black p-3 flex justify-between gap-4">
-                            <button onclick="cancelEdit(${post.id})" class="battle-btn btn-bag px-4 py-2 w-1/2">
+                        <div class="bg-gray-100 border-t-2 border-black p-3 flex justify-end gap-3 rounded-b-lg">
+                            <button onclick="cancelEdit(${post.id})" class="battle-btn btn-bag text-black">
                                 CANCEL
                             </button>
-                            <button onclick="saveEdit(${post.id})" class="battle-btn btn-poke px-4 py-2 w-1/2">
-                                SAVE
+                            <button onclick="saveEdit(${post.id})" class="battle-btn btn-poke shadow-[2px_2px_0_#000]">
+                                SAVE CHANGES
                             </button>
                         </div>
                     `;
                 } else {
-                    // --- NORMAL VIEW UI (Based heavily on Image 1 Stat Panel) ---
+                    // --- NORMAL VIEW UI (Facebook Style) ---
                     postEl.innerHTML = `
-                        <!-- Top Info Bar -->
-                        <div class="bg-black text-white px-3 py-1 flex justify-between border-b-4 border-black text-lg">
-                            <span class="text-unova-blue font-bold">${post.author}</span>
-                            <span>${post.timestamp}</span>
-                        </div>
-                        
-                        <!-- Main Content Area -->
-                        <div class="flex flex-col md:flex-row bg-white">
-                            
-                            <!-- Left Stats Column (like Image 1) -->
-                            <div class="stat-label-col w-full md:w-1/3 flex flex-row md:flex-col shrink-0">
-                                <div class="p-3 border-b md:border-b-0 md:border-r-4 border-black flex items-center justify-center bg-white w-1/3 md:w-full">
-                                    <img src="${post.avatar}" alt="avatar" class="pixel-art h-16 w-16 md:h-24 md:w-24 object-contain">
-                                </div>
-                                <div class="flex flex-col flex-grow text-lg border-l-4 md:border-l-0 md:border-t-4 border-black">
-                                    <div class="stat-row p-2 flex justify-between">
-                                        <span class="stat-bullet">ID No.</span>
-                                        <span class="text-gray-600">${post.dexNo}</span>
-                                    </div>
-                                    <div class="stat-row p-2 flex justify-between">
-                                        <span class="stat-bullet">Class</span>
-                                        <span class="bg-unova-gray border border-black px-1 text-sm flex items-center">${post.type}</span>
-                                    </div>
+                        <!-- Post Header -->
+                        <div class="p-3 flex justify-between items-start">
+                            <div class="flex items-center gap-3">
+                                <img src="${post.avatar}" alt="avatar" class="pixel-art h-10 w-10 bg-gray-100 border-2 border-black rounded-full object-contain p-1 cursor-pointer hover:bg-gray-200">
+                                <div class="flex flex-col leading-tight">
+                                    <span class="font-bold text-lg text-unova-blue hover:underline cursor-pointer">${post.author}</span>
+                                    <span class="text-gray-500 text-sm flex items-center gap-1">${post.timestamp} • 🌎</span>
                                 </div>
                             </div>
-
-                            <!-- Right Text Column -->
-                            <div class="w-full md:w-2/3 p-4 md:p-6 text-xl leading-relaxed bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2rVrvwMQMTIwwAAgwAD12wMls/1bXQAAAABJRU5ErkJggg==')]">
-                                <p class="bg-white/80 p-2 rounded">${post.content}</p>
-                            </div>
-                        </div>
-
-                        <!-- Bottom Action Bar (Battle Buttons from Image 2) -->
-                        <div class="bg-unova-dark border-t-4 border-black p-3 sm:p-4 flex justify-between items-center w-full">
                             
-                            <!-- Left side: Edit Button (Bag styling) -->
-                            <button onclick="toggleEdit(${post.id})" class="battle-btn btn-run px-4 py-2 sm:px-6 w-5/12 sm:w-auto" title="Modify Status">
+                            <!-- Context Menu / Edit (Bag) Button -->
+                            <button onclick="toggleEdit(${post.id})" class="battle-btn btn-bag text-black px-2 py-1 text-xs opacity-80 hover:opacity-100" title="Edit Post">
                                 EDIT
                             </button>
-                            
-                            <!-- Center decorative element -->
-                            <div class="hidden sm:flex flex-col gap-1 items-center px-4">
-                                <div class="w-2 h-2 rounded-full bg-white"></div>
-                                <div class="w-2 h-2 rounded-full bg-white"></div>
-                            </div>
+                        </div>
+                        
+                        <!-- Post Content -->
+                        <div class="px-4 pb-3 text-lg leading-relaxed whitespace-pre-wrap">${post.content}</div>
 
-                            <!-- Right side: Delete Button (Fight styling - clearly separated!) -->
-                            <button onclick="deletePost(${post.id})" class="battle-btn btn-fight px-4 py-2 sm:px-6 w-5/12 sm:w-auto" title="Delete Status">
-                                DELETE
+                        <!-- Stats Row -->
+                        <div class="px-4 py-2 text-gray-500 text-sm flex justify-between items-center border-t border-gray-200 mx-2">
+                            <div class="flex items-center gap-1">
+                                <div class="bg-unova-blue text-white rounded-full w-5 h-5 flex items-center justify-center border border-black text-xs">👍</div>
+                                <span>${post.likes + (post.isLiked ? 1 : 0)}</span>
+                            </div>
+                            <div class="hover:underline cursor-pointer">${post.comments} comments</div>
+                        </div>
+
+                        <!-- Action Buttons (Facebook Footer) -->
+                        <div class="px-2 py-1 border-t border-gray-300 flex justify-between bg-gray-50 rounded-b-lg">
+                            <!-- Like Button -->
+                            <button onclick="toggleLike(${post.id})" class="flex-1 flex justify-center items-center gap-2 py-2 hover:bg-gray-200 rounded text-gray-600 font-bold transition-colors ${post.isLiked ? 'text-unova-blue' : ''}">
+                                <span class="text-xl pb-1">👍</span> Like
+                            </button>
+                            
+                            <!-- Comment Button -->
+                            <button class="flex-1 flex justify-center items-center gap-2 py-2 hover:bg-gray-200 rounded text-gray-600 font-bold transition-colors">
+                                <span class="text-xl pb-1">💬</span> Comment
                             </button>
 
+                            <!-- Delete Button (Clearly Separated Red Run Button) -->
+                            <button onclick="deletePost(${post.id})" class="flex-1 flex justify-center items-center gap-2 py-2 hover:bg-red-100 rounded text-unova-red font-bold transition-colors" title="Delete Post">
+                                DELETE
+                            </button>
                         </div>
                     `;
                 }
@@ -301,9 +400,9 @@
 
             if (posts.length === 0) {
                 feedContainer.innerHTML = `
-                    <div class="unova-container bg-unova-dark text-white p-8 text-center text-xl">
-                        <p>No active signals in the area.</p>
-                        <p class="text-gray-400 text-sm mt-2">Use the dialogue box above to broadcast.</p>
+                    <div class="unova-card bg-white p-8 text-center border-dashed border-4 border-gray-400">
+                        <p class="text-xl text-gray-500 font-bold mb-2">No More Posts</p>
+                        <p class="text-gray-400">Add friends to see more stories in your feed.</p>
                     </div>
                 `;
             }
@@ -318,13 +417,14 @@
 
             const newPost = {
                 id: generateId(),
-                author: "You",
-                dexNo: "999",
-                type: "TRAINER",
+                author: "Player One",
                 avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/498.gif", // Tepig
                 content: content,
-                timestamp: "Lv. 5",
-                isEditing: false
+                timestamp: "Just now",
+                likes: 0,
+                comments: 0,
+                isEditing: false,
+                isLiked: false
             };
 
             posts.unshift(newPost);
@@ -361,14 +461,33 @@
         }
 
         function deletePost(id) {
-            if (confirm("Got away safely! (Delete this post?)")) {
+            if (confirm("Got away safely! (Are you sure you want to delete this post?)")) {
                 posts = posts.filter(p => p.id !== id);
                 renderFeed();
             }
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', renderFeed);
+        function toggleLike(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                post.isLiked = !post.isLiked;
+                renderFeed();
+            }
+        }
+
+        // Handle enter key in create post
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFeed();
+            
+            // Auto resize textarea (simulated simply for now)
+            const newPostInput = document.getElementById('newPostInput');
+            if(newPostInput) {
+                newPostInput.addEventListener('input', function() {
+                    this.style.height = '48px'; // Reset
+                    this.style.height = (this.scrollHeight) + 'px';
+                });
+            }
+        });
     </script>
 </body>
 </html>
