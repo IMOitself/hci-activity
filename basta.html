@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unova Network</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        unova: {
+                            blue: '#0099e6',   /* POKEMON INFO Header Blue */
+                            dark: '#1a1c23',   /* Battle Screen Dark BG */
+                            panel: '#ffffff',  /* Stat Panel White */
+                            gray: '#e0e0e0',   /* Stat Panel Left Column */
+                            red: '#e60012',    /* FIGHT / RUN Red */
+                            green: '#00b33c',  /* POKEMON Green */
+                            yellow: '#ffcc00', /* BAG Yellow */
+                            runblue: '#00aae6' /* RUN Blue */
+                        }
+                    },
+                    fontFamily: {
+                        'pixel': ['"DotGothic16"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #111;
+            /* Replicating the dark grid from the battle/status screens */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+            background-size: 16px 16px;
+            background-attachment: fixed;
+        }
+
+        /* --- Custom Unova UI Elements based on References --- */
+
+        .unova-container {
+            border: 4px solid #000;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+        }
+
+        /* The Battle Screen Button Style (Image 2) */
+        .battle-btn {
+            background-color: #2a2a2a;
+            color: #ffffff;
+            font-family: 'DotGothic16', sans-serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px #000;
+            border: 3px solid #000;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.1s;
+            /* The iconic colored inner border */
+            box-shadow: inset 0 0 0 3px var(--btn-color);
+            border-radius: 4px; /* Slight rounding for the tech aesthetic */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .battle-btn:active {
+            transform: translateY(2px);
+        }
+
+        /* Specific Button Colors based on the bottom screen */
+        .btn-fight  { --btn-color: #e60012; } /* Red */
+        .btn-bag    { --btn-color: #ffcc00; } /* Yellow */
+        .btn-poke   { --btn-color: #00b33c; } /* Green */
+        .btn-run    { --btn-color: #00aae6; } /* Blue */
+
+        /* The Info Top Bar (Image 1) */
+        .info-header {
+            background-color: #0099e6;
+            border-bottom: 4px solid #000;
+            color: #000;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.3);
+            font-weight: bold;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 16px;
+            position: relative;
+        }
+        
+        /* The angled << STATUS >> box from Image 1 */
+        .status-badge {
+            background: #e0e0e0;
+            color: #000;
+            text-shadow: none;
+            padding: 2px 12px;
+            border: 2px solid #000;
+            font-size: 0.9rem;
+            clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%);
+            margin-right: -10px;
+        }
+
+        /* Stat Panel specific styles (Image 1) */
+        .stat-row {
+            border-bottom: 2px solid #ccc;
+        }
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label-col {
+            background-color: #f0f0f0;
+            border-right: 4px solid #000;
+            position: relative;
+        }
+        
+        /* The little dot bullet points from Image 1 */
+        .stat-bullet::before {
+            content: '•';
+            color: #666;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        /* Textarea mimicking the battle dialogue box */
+        .dialogue-box {
+            background-color: #1a1c23;
+            border: 4px solid #000;
+            color: #fff;
+            box-shadow: inset 0 0 0 2px #fff;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            resize: vertical;
+        }
+        .dialogue-box:focus {
+            outline: none;
+            box-shadow: inset 0 0 0 2px #ffcc00; /* Yellow focus */
+        }
+
+        /* Pixel rendering for avatars */
+        .pixel-art {
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body class="font-pixel text-black min-h-screen pb-12">
+
+    <!-- Global Header (Mimicking "POKÉMON INFO" bar) -->
+    <header class="info-header sticky top-0 z-50 shadow-lg">
+        <h1 class="text-xl md:text-2xl uppercase tracking-widest">TRAINER NETWORK</h1>
+        <div class="status-badge"><< ONLINE >></div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 mt-8">
+        
+        <!-- Create Post Area (Dialogue Box Style) -->
+        <div class="mb-10">
+            <h2 class="text-white text-xl mb-2 drop-shadow-md">What will you do?</h2>
+            <div class="relative">
+                <textarea id="newPostInput" class="dialogue-box min-h-[100px] text-lg" placeholder="Broadcast a message to the region..."></textarea>
+                <div class="absolute bottom-[-16px] right-2 flex gap-3">
+                    <button onclick="createPost()" class="battle-btn btn-poke px-6 py-2 shadow-lg">
+                        BROADCAST!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feed Container -->
+        <div id="feed" class="flex flex-col gap-8 mt-12">
+            <!-- Posts injected via JS -->
+        </div>
+
+    </main>
+
+    <script>
+        // Initial Data
+        let posts = [
+            {
+                id: 1,
+                author: "Hilbert",
+                dexNo: "001",
+                type: "HERO",
+                avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/501.gif", // Oshawott
+                content: "Training on Route 1. The wild Patrat are relentless today, but Oshawott is holding up perfectly. Time to heal up at the Accumula Town Center!",
+                timestamp: "Lv. 14",
+                isEditing: false
+            },
+            {
+                id: 2,
+                author: "Cheren",
+                dexNo: "002",
+                type: "RIVAL",
+                avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/495.gif", // Snivy
+                content: "A Pokémon battle isn't just about throwing out moves blindly. You need to calculate type advantages and anticipate your opponent's strategy.",
+                timestamp: "Lv. 16",
+                isEditing: false
+            }
+        ];
+
+        function generateId() {
+            return Math.floor(Math.random() * 100000);
+        }
+
+        function renderFeed() {
+            const feedContainer = document.getElementById('feed');
+            feedContainer.innerHTML = '';
+
+            posts.forEach(post => {
+                const postEl = document.createElement('div');
+                postEl.className = 'unova-container bg-white flex flex-col relative';
+                
+                if (post.isEditing) {
+                    // --- EDIT MODE UI ---
+                    postEl.innerHTML = `
+                        <!-- Header -->
+                        <div class="bg-black text-white px-3 py-1 flex justify-between border-b-4 border-black text-lg">
+                            <span>EDITING TRANSMISSION</span>
+                        </div>
+                        <!-- Edit Body -->
+                        <div class="p-4 bg-[#2a2a2a]">
+                            <textarea id="edit-input-${post.id}" class="dialogue-box min-h-[120px] text-lg">${post.content}</textarea>
+                        </div>
+                        <!-- Bottom Action Bar -->
+                        <div class="bg-unova-dark border-t-4 border-black p-3 flex justify-between gap-4">
+                            <button onclick="cancelEdit(${post.id})" class="battle-btn btn-bag px-4 py-2 w-1/2">
+                                CANCEL
+                            </button>
+                            <button onclick="saveEdit(${post.id})" class="battle-btn btn-poke px-4 py-2 w-1/2">
+                                SAVE
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    // --- NORMAL VIEW UI (Based heavily on Image 1 Stat Panel) ---
+                    postEl.innerHTML = `
+                        <!-- Top Info Bar -->
+                        <div class="bg-black text-white px-3 py-1 flex justify-between border-b-4 border-black text-lg">
+                            <span class="text-unova-blue font-bold">${post.author}</span>
+                            <span>${post.timestamp}</span>
+                        </div>
+                        
+                        <!-- Main Content Area -->
+                        <div class="flex flex-col md:flex-row bg-white">
+                            
+                            <!-- Left Stats Column (like Image 1) -->
+                            <div class="stat-label-col w-full md:w-1/3 flex flex-row md:flex-col shrink-0">
+                                <div class="p-3 border-b md:border-b-0 md:border-r-4 border-black flex items-center justify-center bg-white w-1/3 md:w-full">
+                                    <img src="${post.avatar}" alt="avatar" class="pixel-art h-16 w-16 md:h-24 md:w-24 object-contain">
+                                </div>
+                                <div class="flex flex-col flex-grow text-lg border-l-4 md:border-l-0 md:border-t-4 border-black">
+                                    <div class="stat-row p-2 flex justify-between">
+                                        <span class="stat-bullet">ID No.</span>
+                                        <span class="text-gray-600">${post.dexNo}</span>
+                                    </div>
+                                    <div class="stat-row p-2 flex justify-between">
+                                        <span class="stat-bullet">Class</span>
+                                        <span class="bg-unova-gray border border-black px-1 text-sm flex items-center">${post.type}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Text Column -->
+                            <div class="w-full md:w-2/3 p-4 md:p-6 text-xl leading-relaxed bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2rVrvwMQMTIwwAAgwAD12wMls/1bXQAAAABJRU5ErkJggg==')]">
+                                <p class="bg-white/80 p-2 rounded">${post.content}</p>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Action Bar (Battle Buttons from Image 2) -->
+                        <div class="bg-unova-dark border-t-4 border-black p-3 sm:p-4 flex justify-between items-center w-full">
+                            
+                            <!-- Left side: Edit Button (Bag styling) -->
+                            <button onclick="toggleEdit(${post.id})" class="battle-btn btn-run px-4 py-2 sm:px-6 w-5/12 sm:w-auto" title="Modify Status">
+                                EDIT
+                            </button>
+                            
+                            <!-- Center decorative element -->
+                            <div class="hidden sm:flex flex-col gap-1 items-center px-4">
+                                <div class="w-2 h-2 rounded-full bg-white"></div>
+                                <div class="w-2 h-2 rounded-full bg-white"></div>
+                            </div>
+
+                            <!-- Right side: Delete Button (Fight styling - clearly separated!) -->
+                            <button onclick="deletePost(${post.id})" class="battle-btn btn-fight px-4 py-2 sm:px-6 w-5/12 sm:w-auto" title="Delete Status">
+                                DELETE
+                            </button>
+
+                        </div>
+                    `;
+                }
+                feedContainer.appendChild(postEl);
+            });
+
+            if (posts.length === 0) {
+                feedContainer.innerHTML = `
+                    <div class="unova-container bg-unova-dark text-white p-8 text-center text-xl">
+                        <p>No active signals in the area.</p>
+                        <p class="text-gray-400 text-sm mt-2">Use the dialogue box above to broadcast.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Actions
+        function createPost() {
+            const input = document.getElementById('newPostInput');
+            const content = input.value.trim();
+            
+            if (!content) return;
+
+            const newPost = {
+                id: generateId(),
+                author: "You",
+                dexNo: "999",
+                type: "TRAINER",
+                avatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/498.gif", // Tepig
+                content: content,
+                timestamp: "Lv. 5",
+                isEditing: false
+            };
+
+            posts.unshift(newPost);
+            input.value = '';
+            renderFeed();
+        }
+
+        function toggleEdit(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                post.isEditing = true;
+                renderFeed();
+            }
+        }
+
+        function cancelEdit(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                post.isEditing = false;
+                renderFeed();
+            }
+        }
+
+        function saveEdit(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                const newContent = document.getElementById(`edit-input-${id}`).value.trim();
+                if (newContent) {
+                    post.content = newContent;
+                    post.isEditing = false;
+                    renderFeed();
+                }
+            }
+        }
+
+        function deletePost(id) {
+            if (confirm("Got away safely! (Delete this post?)")) {
+                posts = posts.filter(p => p.id !== id);
+                renderFeed();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', renderFeed);
+    </script>
+</body>
+</html>
